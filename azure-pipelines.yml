@@ -1,26 +1,15 @@
+---
+
 # Starter pipeline
-# Start with a minimal pipeline that you can customize to build and deploy your code.
-# Add steps that build, run tests, deploy, and more:
-# https://aka.ms/yaml
-
-trigger:
-- main
-
-pool:
-  vmImage: ubuntu-latest
 
 variables:
   - name: SourceSA
     value: 'hardacinfrthmb00saqa'
   - name: DestinationSA
     value: 'gonzalocopy1'
-steps:
-- task: AzureCLI@2
-  inputs:
-    azureSubscription: 'hardac-dev'
-    scriptType: 'bash'
-    scriptLocation: 'inlineScript'
-    inlineScript: 'az storage account list'
+
+pool:
+  vmImage: ubuntu-latest
 
 stages:
 
