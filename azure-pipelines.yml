@@ -13,12 +13,12 @@ pool:
 
 stages:
 
-  - stage: 'Trigger_Backup_LabeledData'
-    displayName: 'Backup Labeled Data'
+  - stage: 'Trigger_Copy_thumbnails'
+    displayName: 'Copy Thumbnails'
     condition: succeeded()
     jobs:
       - job: "Build_Pipeline"
-        displayName: "Backup data"
+        displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
           - task: AzureCLI@1
@@ -42,7 +42,7 @@ stages:
               artifact: variables
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                echo 'Backup and restore is starting'
+                echo 'copy is starting'
 
                 storageAccountExist=$(az storage account list --query "[?name=='$(DestinationSA)']")
                 rgDestination="hardac-ml-data-backup"
