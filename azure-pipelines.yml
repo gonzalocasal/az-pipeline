@@ -9,9 +9,12 @@ trigger:
 pool:
   vmImage: ubuntu-latest
 
-steps:
-- script: echo Hello, world!
-  displayName: 'Run a one-line script'
+variables:
+  - name: SourceSA
+    value: 'hardacinfrthmb00saqa'
+  - name: DestinationSA
+    value: 'gonzalocopy1'
+
 
 - script: |
     echo Add other tasks to build, test, and deploy your project.
@@ -23,3 +26,72 @@ steps:
     scriptType: 'bash'
     scriptLocation: 'inlineScript'
     inlineScript: 'az storage account list'
+
+stages:
+
+  - stage: 'Trigger_Backup_LabeledData'
+    displayName: 'Backup Labeled Data'
+    condition: succeeded()
+    jobs:
+      - job: "Build_Pipeline"
+        displayName: "Backup data"
+        timeoutInMinutes: 10
+        steps:
+          - task: AzureCLI@1
+            name: GenerateSASSource
+            inputs:
+              azureSubscription: 'HARDAC-Dev'
+              scriptLocation: inlineScript
+              workingDirectory: $(Build.SourcesDirectory)/mlops
+              inlineScript: |
+                echo 'Generate SAS Token for source'
+
+                end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+                sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                echo "##vso[task.setvariable variable=sasSource]$sasSource"
+              artifact: variables
+          - task: AzureCLI@1
+            name: copy-thumbnails
+            inputs:
+              azureSubscription: 'HARDAC-Backup'
+              scriptLocation: inlineScript
+              artifact: variables
+              workingDirectory: $(Build.SourcesDirectory)/mlops
+              inlineScript: |
+                echo 'Backup and restore is starting'
+
+                storageAccountExist=$(az storage account list --query "[?name=='$(DestinationSA)']")
+                rgDestination="hardac-ml-data-backup"
+                dateNow=$(date +"%Y-%m")
+
+                if [ $(az group exists --name $rgDestination) = false ]; then
+                    echo "Missing resource group for SA destination"
+                    az group create --name "$rgDestination" --location "westus2"
+                    echo "Resource group for SA destination created"
+                fi
+
+                if [[ "$storageAccountExist" == "[]" ]]; then
+                    echo "Missing StorageAccount destination"
+
+                    az storage account create --name "$(DestinationSA)" --resource-group "$rgDestination" --min-tls-version TLS1_2
+                    echo "StorageAccount destination created"
+                else
+                    echo "StorageAccount destination already exists"
+                fi
+
+                end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
+
+                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+
+                lockSADestination=$(az lock list --resource-group "$rgDestination" --resource-name "$(DestinationSA)" --namespace Microsoft.Storage --resource-type storageAccounts --parent "")
+
+                if [[ "$lockSADestination" == "[]" ]]; then
+                    echo "Missing Lock in StorageAccount destination"
+                    az lock create --name LockSA --lock-type CanNotDelete --resource-group "$rgDestination" --resource-name "$(DestinationSA)" --resource-type Microsoft.Storage/storageAccounts
+                    echo "Lock in StorageAccount destination created"
+                else
+                    echo "Lock in StorageAccount destination already exists"
+                fi
+
+                echo "starting azcopy command"
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
