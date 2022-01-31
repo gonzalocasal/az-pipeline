@@ -14,12 +14,7 @@ variables:
     value: 'hardacinfrthmb00saqa'
   - name: DestinationSA
     value: 'gonzalocopy1'
-
-
-- script: |
-    echo Add other tasks to build, test, and deploy your project.
-    echo See https://aka.ms/yaml
-  displayName: 'Run a multi-line script'
+steps:
 - task: AzureCLI@2
   inputs:
     azureSubscription: 'hardac-dev'
@@ -95,3 +90,4 @@ stages:
 
                 echo "starting azcopy command"
                 azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
+
