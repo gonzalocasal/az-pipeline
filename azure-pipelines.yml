@@ -24,7 +24,7 @@ stages:
           - task: AzureCLI@1
             name: GenerateSASSource
             inputs:
-              azureSubscription: 'HARDAC-Dev'
+              azureSubscription: 'hardac-qa'
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
@@ -37,7 +37,7 @@ stages:
           - task: AzureCLI@1
             name: copy_thumbnails
             inputs:
-              azureSubscription: 'HARDAC-Backup'
+              azureSubscription: 'hardac-qa'
               scriptLocation: inlineScript
               artifact: variables
               workingDirectory: $(Build.SourcesDirectory)/mlops
