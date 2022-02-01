@@ -26,7 +26,7 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'hardac-qa'
+              azureSubscription: 'HARDAC-Deva'
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
@@ -39,7 +39,7 @@ stages:
           - task: AzureCLI@1
             name: copy_thumbnails
             inputs:
-              azureSubscription: 'hardac-qa'
+              azureSubscription: 'HARDAC-Dev'
               scriptLocation: inlineScript
               artifact: variables
               workingDirectory: $(Build.SourcesDirectory)/mlops
