@@ -23,6 +23,8 @@ stages:
         steps:
           - task: AzureCLI@1
             name: GenerateSASSource
+            env:
+              AZURE_STORAGE_AUTH_MODE: login
             inputs:
               azureSubscription: 'hardac-qa'
               scriptLocation: inlineScript
