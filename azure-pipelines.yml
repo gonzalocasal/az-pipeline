@@ -37,7 +37,7 @@ stages:
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
               artifact: variables
           - task: AzureCLI@1
-            name: GenerateSASSource
+            name: GenerateSASDestination
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
