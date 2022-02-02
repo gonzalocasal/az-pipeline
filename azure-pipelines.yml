@@ -51,11 +51,13 @@ stages:
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 
-                echo "sas generated: "
+                echo "sas generated"
+                echo $(sasDestination)
                 
-                echo $sasDestination
                 echo "starting azcopy command"
+                echo "from"
                 echo "https://$(SourceSA).blob.core.windows.net/?$(sasSource)"
+                echo "to"
                 echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
                 
                 azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
