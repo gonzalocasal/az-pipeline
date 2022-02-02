@@ -6,7 +6,7 @@ variables:
   - name: SourceSA
     value: 'hardacinfrthmb00sasb'
   - name: DestinationSA
-    value: 'hardacinfrthmb00saqa'
+    value: 'gonzalocopy1'
 
 pool:
   vmImage: ubuntu-latest
