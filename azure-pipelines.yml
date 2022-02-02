@@ -45,11 +45,10 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                echo 'Generate SAS Token for source'
-
+                echo 'Generate SAS Token for destination'
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
-                sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
-                echo "##vso[task.setvariable variable=sasSource]$sasSource"
+                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                echo "##vso[task.setvariable variable=sasDestination]$sasDestination"
               artifact: variables
           
           - task: AzureCLI@1
