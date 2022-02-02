@@ -6,7 +6,7 @@ variables:
   - name: SourceSA
     value: 'hardacinfrthmb00sasb'
   - name: DestinationSA
-    value: 'hardacinfrthmb00saqa'
+    value: 'gonzalocopy1'
 
 pool:
   vmImage: ubuntu-latest
@@ -43,11 +43,11 @@ stages:
 
                 echo "starting azcopy command"
                 echo "from"
-                echo "https://$(SourceSA).blob.core.windows.net/?$(sasSource)"
+                echo "https://$(SourceSA).blob.core.windows.net/?$sasSource"
                 echo "to"
-                echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
+                echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
                 
-                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$sasSource" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
               artifact: variables
           
                 
