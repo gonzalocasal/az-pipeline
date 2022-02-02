@@ -45,7 +45,7 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'HARDAC-Dev'
+              azureSubscription: 'HARDAC-Backup'
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
@@ -70,3 +70,4 @@ stages:
               artifact: variables
               
                 
+
