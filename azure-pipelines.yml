@@ -72,8 +72,8 @@ stages:
                 echo "from"
                 echo "https://$(SourceSA).blob.core.windows.net/?$(sasSource)"
                 echo "to"
-                echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$(sasDestination)"
+                echo "https://$(DestinationSA).blob.core.windows.net/gonzalo/run/?$(sasDestination)"
                 
-                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/run/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
               
               artifact: variables
