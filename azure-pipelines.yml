@@ -49,14 +49,15 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                echo 'Generate SAS Token for source'
+                
 
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 
-                echo "CREATED"
+                echo "SOURCE"
                 
-                sasSource = $(variables.sasSource)
+                sasSource = $(sasSource)
                 
+                echo 'Generate SAS Token for Destination'
                 sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo $sasDestination
 
@@ -66,7 +67,7 @@ stages:
                 echo "to"
                 echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
                 
-                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$sasSource" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
               artifact: variables
               
                 
