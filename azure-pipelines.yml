@@ -34,7 +34,6 @@ stages:
 
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
-                echo "CREATED"
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
                 echo $sasSource
               
@@ -54,16 +53,26 @@ stages:
                 
                 echo 'Generate SAS Token for Destination'
                 sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                echo "##vso[task.setvariable variable=sasDestination]$sasDestination"
                 echo $sasDestination
-
+              
+              artifact: variables
+            
+          - task: AzureCLI@1
+            name: Copy
+            env:
+              AZURE_STORAGE_AUTH_MODE: login
+            inputs:
+              scriptLocation: inlineScript
+              workingDirectory: $(Build.SourcesDirectory)/mlops
+              inlineScript: |
+                
                 echo "starting azcopy command"
                 echo "from"
                 echo "https://$(SourceSA).blob.core.windows.net/?$(sasSource)"
                 echo "to"
-                echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
+                echo "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$(sasDestination)"
                 
                 azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
-              artifact: variables
               
-                
-
+              artifact: variables
