@@ -34,6 +34,7 @@ stages:
 
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                echo "CREATED"
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
               artifact: variables
           - task: AzureCLI@1
