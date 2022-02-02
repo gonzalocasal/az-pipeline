@@ -54,6 +54,8 @@ stages:
           
           - task: AzureCLI@1
             name: copy_thumbnails
+            env:
+              AZURE_STORAGE_AUTH_MODE: login
             inputs:
               azureSubscription: 'HARDAC-Dev'
               scriptLocation: inlineScript
