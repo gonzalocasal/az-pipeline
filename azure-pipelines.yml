@@ -4,7 +4,7 @@
 
 variables:
   - name: SourceSA
-    value: 'hardacinfrthmb00saprd'
+    value: 'hardacinfrthmb00sasb'
   - name: DestinationSA
     value: 'hardacinfrthmb00saqa'
 
@@ -35,8 +35,9 @@ stages:
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "CREATED"
-                echo $(sasSource)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
+                echo $(sasSource)
+                
               artifact: variables
           - task: AzureCLI@1
             name: copy_thumbnails
