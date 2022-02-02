@@ -4,9 +4,9 @@
 
 variables:
   - name: SourceSA
-    value: 'hardacinfrthmb00saqa'
-  - name: DestinationSA
     value: 'hardacinfrthmb00saprd'
+  - name: DestinationSA
+    value: 'hardacinfrthmb00saqa'
 
 pool:
   vmImage: ubuntu-latest
@@ -51,4 +51,16 @@ stages:
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
               artifact: variables
+          
+          - task: AzureCLI@1
+            name: copy_thumbnails
+            inputs:
+              azureSubscription: 'HARDAC-Dev'
+              scriptLocation: inlineScript
+              artifact: variables
+              workingDirectory: $(Build.SourcesDirectory)/mlops
+              inlineScript: |
+                echo 'copy is starting'              
+                echo "starting azcopy command"
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/$dateNow/?$sasDestination" --recursive --overwrite "ifSourceNewer"
           
