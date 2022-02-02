@@ -36,10 +36,7 @@ stages:
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "CREATED"
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
-                echo "$sasSource"
                 echo $sasSource
-                
-                az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv
 
               artifact: variables
           - task: AzureCLI@1
@@ -55,10 +52,10 @@ stages:
                 echo 'copy is starting'
                 dateNow=$(date +"%Y-%m")
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
-                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 
-                echo "sas generated"
-                echo $(sasDestination)
+                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                echo "sas destination generated"
+                echo $sasDestination
                 
                 echo "starting azcopy command"
                 echo "from"
