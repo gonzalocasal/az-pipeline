@@ -39,9 +39,9 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
                 
-                echo $(parameters.destination-environment)
+                echo ${{ parameters.destination-environment}}
                 echo $(DestinationSA)
-                echo $(DestinationSA['qa'])
+                echo $(DestinationSA[${{ parameters.destination-environment}}])
                 echo $(DestinationSA.qa)
                 
                 echo 'Generate SAS Token for source'
