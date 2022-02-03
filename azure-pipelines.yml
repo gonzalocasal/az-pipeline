@@ -1,6 +1,10 @@
 ---
 # Starter pipeline
 
+parameters:
+  - name: 'environment'
+    type: string
+
 variables:
   
   - name: SourceSA
@@ -34,6 +38,9 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
+                
+                echo {{DestinationSA}}
+                
                 echo 'Generate SAS Token for source'
 
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
