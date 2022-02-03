@@ -1,18 +1,22 @@
 ---
-
 # Starter pipeline
 
 variables:
+  
   - name: SourceSA
-    value: 'hardacinfrthmb00sasb'
-  - name: DestinationSA
-    value: 'gonzalocopy1'
+    value: 'hardacinfrthmb00saprd'
+  - name: SourceSC
+    value: 'HARDAC-Prod'
+
+  - name: 'DestinationSA'
+    value: "{'uat' : 'hardacinfrthmb00sastg', 'qa' : 'hardacinfrthmb00saqa'}"
+  - name: 'DestinationSC'
+    value: "{'uat' : 'HARDAC-Stage', 'qa' : 'HARDAC-Qa'}"  
 
 pool:
   vmImage: ubuntu-latest
 
 stages:
-
   - stage: 'Trigger_Copy_thumbnails'
     displayName: 'Copy Thumbnails'
     condition: succeeded()
@@ -35,8 +39,7 @@ stages:
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
-                echo $sasSource
-              
+                echo $sasSource           
               artifact: variables
           
           - task: AzureCLI@1
@@ -54,8 +57,7 @@ stages:
                 echo 'Generate SAS Token for Destination'
                 sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasDestination]$sasDestination"
-                echo $sasDestination
-              
+                echo $sasDestination              
               artifact: variables
             
           - task: AzureCLI@1
@@ -70,10 +72,9 @@ stages:
                 
                 echo "starting azcopy command"
                 echo "from"
-                echo "https://$(SourceSA).blob.core.windows.net/?$(sasSource)"
+                echo "https://$(SourceSA).blob.core.windows.net"
                 echo "to"
-                echo "https://$(DestinationSA).blob.core.windows.net/gonzalo/run/?$(sasDestination)"
+                echo "https://$(DestinationSA).blob.core.windows.net"
                 
-                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/gonzalo/run/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
-              
+                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
               artifact: variables
