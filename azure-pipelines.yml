@@ -36,7 +36,7 @@ stages:
     jobs:
       - job: "Build_Pipeline"
         variables:
-          job_variable: $(DestinationSAob.$${{ parameters.destenv }})
+          job_variable: $(DestinationSAob.{{ parameters.destenv }})
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
