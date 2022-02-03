@@ -1,27 +1,29 @@
 ---
 # Starter pipeline
 
-parameters:
-  - name: 'destenv'
-    type: string
-  
-  - name: 'DestinationSAob'
-    type: object
-    default:
-        uat: hardacinfrthmb00sastg
-        qa: hardacinfrthmb00saqa
-
-
 variables:
   
-  - name: storageAccount-prd
-    value: 'hardacinfrthmb00saprd'
+  - name: storageAccount-qa
+    value: 'hardacinfrthmb00saqa'
   
   - name: storageAccount-stg
     value: 'hardacinfrthmb00sastg'
   
-  - name: storageAccount-qa
+  - name: storageAccount-prd
     value: 'hardacinfrthmb00saprd'
+  
+
+  - name: serviceConnection-qa
+    value: 'HARDAC-Qa'
+  
+  - name: serviceConnection-stg
+    value: 'HARDAC-Stage'
+  
+  - name: serviceConnection-prd
+    value: 'HARDAC-Prod'
+  
+
+
   
   - name: SourceSA
     value: 'hardacinfrthmb00saprd'
@@ -46,7 +48,6 @@ stages:
       - job: "Build_Pipeline"
         variables:
           job_variable: $(storageAccount-${{ parameters.destenv }})
-          job_variable2: $(DestinationSAob)
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
@@ -55,23 +56,13 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'HARDAC-Dev'
+              azureSubscription: $(serviceConnection-prd)
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                echo "----DEBUG----"
-                echo ${{ parameters.destenv }}
-                echo $(DestinationSA)
-                
-                echo "----DEBUG----"
-                echo "${{ variables.job_variable }}"
-                echo "${{ variables.job_variable2 }}"
-                
-
-
                 echo 'Generate SAS Token for source'
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
-                sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(storageAccount-prd) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
                 echo $sasSource           
               artifact: variables
@@ -81,7 +72,7 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'HARDAC-Backup'
+              azureSubscription: $(serviceConnection-${{ parameters.destenv }})
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
@@ -89,7 +80,7 @@ stages:
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 
                 echo 'Generate SAS Token for Destination'
-                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(DestinationSA) --services bfqt --resource-types sco --expiry $end -o tsv)
+                sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(storageAccount-${{ parameters.destenv }}) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasDestination]$sasDestination"
                 echo $sasDestination              
               artifact: variables
