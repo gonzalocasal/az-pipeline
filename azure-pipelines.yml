@@ -1,9 +1,11 @@
 ---
 # Starter pipeline
 
+parameters:
+   - name: 'destenv'
+     type: string
+
 variables:
-  - name: 'destenv'
-    type: string
 
   - name: storageAccount-qa
     value: 'hardacinfrthmb00saqa'
