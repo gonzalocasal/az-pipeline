@@ -39,6 +39,11 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
                 echo "----DEBUG----"
+                
+                echo $DESTINATIONENVIRONMENT
+                echo $DestinationEnvironment
+                echo $parameters.DestinationEnvironment
+                echo $parameters_DestinationEnvironment
                 echo $(parameters.DestinationEnvironment)
                 echo $(DestinationEnvironment)
                 echo $(DestinationSA)
