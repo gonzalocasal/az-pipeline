@@ -4,6 +4,13 @@
 parameters:
   - name: 'destenv'
     type: string
+  
+  - name: 'DestinationSAob'
+    type: object
+    default:
+        uat: hardacinfrthmb00sastg
+        qa: hardacinfrthmb00saqa
+
 
 variables:
   
@@ -16,6 +23,8 @@ variables:
     value: "{'uat' : 'hardacinfrthmb00sastg', 'qa' : 'hardacinfrthmb00saqa'}"
   - name: 'DestinationSC'
     value: "{'uat' : 'HARDAC-Stage', 'qa' : 'HARDAC-Qa'}"  
+  
+  
 
 pool:
   vmImage: ubuntu-latest
