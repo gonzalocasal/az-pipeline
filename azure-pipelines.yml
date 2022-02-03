@@ -37,6 +37,7 @@ stages:
       - job: "Build_Pipeline"
         variables:
           job_variable: $(DestinationSAob.${{ parameters.destenv }})
+          job_variable2: $(DestinationSAob)
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
@@ -55,6 +56,8 @@ stages:
                 
                 echo "----DEBUG----"
                 echo "${{ variables.job_variable }}"
+                echo "${{ variables.job_variable2 }}"
+                
 
 
                 echo 'Generate SAS Token for source'
