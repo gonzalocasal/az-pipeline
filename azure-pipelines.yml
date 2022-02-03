@@ -3,6 +3,7 @@
 
 variables:
   - name: 'destenv'
+    type: string
 
   - name: storageAccount-qa
     value: 'hardacinfrthmb00saqa'
