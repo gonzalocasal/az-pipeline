@@ -26,6 +26,8 @@ stages:
     condition: succeeded()
     jobs:
       - job: "Build_Pipeline"
+        variables:
+          job_variable: ${{ DestinationSA.uat }}
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
@@ -42,6 +44,9 @@ stages:
                 echo ${{ parameters.destenv }}
                 echo $(DestinationSA)
                 echo $(DestinationSA.qa)
+                
+                echo "----DEBUG----"
+                echo ${{ parameters.job_variable }}
 
 
                 echo 'Generate SAS Token for source'
