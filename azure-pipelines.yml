@@ -46,7 +46,7 @@ stages:
                 echo $(DestinationSA.qa)
                 
                 echo "----DEBUG----"
-                echo ${{ parameters.job_variable }}
+                echo ${{ variables.job_variable }}
 
 
                 echo 'Generate SAS Token for source'
