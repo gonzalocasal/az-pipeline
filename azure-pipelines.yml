@@ -38,11 +38,8 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                echo ${{ parameters.destination-environment }}
                 echo $(DestinationSA)
-                
                 echo 'Generate SAS Token for source'
-
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
