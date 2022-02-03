@@ -38,6 +38,8 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
+                echo "----DEBUG----"
+                echo $(parameters.DestinationEnvironment)
                 echo $(DestinationEnvironment)
                 echo $(DestinationSA)
                 echo 'Generate SAS Token for source'
