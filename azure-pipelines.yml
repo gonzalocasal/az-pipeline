@@ -2,7 +2,7 @@
 # Starter pipeline
 
 parameters:
-  - name: 'environment'
+  - name: 'destination-environment'
     type: string
 
 variables:
@@ -39,7 +39,10 @@ stages:
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
                 
-                echo {{DestinationSA}}
+                echo $(destination-environment)
+                echo $(DestinationSA)
+                echo $(DestinationSA['qa'])
+                echo $(DestinationSA.('qa'))
                 
                 echo 'Generate SAS Token for source'
 
