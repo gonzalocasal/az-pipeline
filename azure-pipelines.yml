@@ -40,8 +40,10 @@ stages:
               inlineScript: |
                 echo "----DEBUG----"
                 echo ${{ parameters.destenv }}
-                
                 echo $(DestinationSA)
+                echo $(DestinationSA.qa)
+
+
                 echo 'Generate SAS Token for source'
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(SourceSA) --services bfqt --resource-types sco --expiry $end -o tsv)
