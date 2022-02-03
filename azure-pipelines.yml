@@ -27,7 +27,7 @@ stages:
     jobs:
       - job: "Build_Pipeline"
         variables:
-          job_variable: {{ variables.DestinationSA.uat }}
+          job_variable: $(variables.DestinationSA.uat)
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
         steps:
