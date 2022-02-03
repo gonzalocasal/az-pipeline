@@ -94,16 +94,16 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'HARDAC-Backup'
+              azureSubscription: $(serviceConnection-${{ parameters.destenv }})
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
                 
                 echo "starting azcopy command"
                 echo "from"
-                echo "https://$(SourceSA).blob.core.windows.net"
+                echo "https://$(storageAccount-${{ parameters.destenv }}).blob.core.windows.net"
                 echo "to"
-                echo "https://$(DestinationSA).blob.core.windows.net"
+                echo "https://$(storageAccount-prd).blob.core.windows.net"
                 
-                azcopy copy "https://$(SourceSA).blob.core.windows.net/?$(sasSource)" "https://$(DestinationSA).blob.core.windows.net/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
+                azcopy copy "https://$(storageAccount-prd).blob.core.windows.net/?$(sasSource)" "https://$(storageAccount-${{ parameters.destenv }}).blob.core.windows.net/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
               artifact: variables
