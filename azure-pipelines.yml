@@ -14,6 +14,15 @@ parameters:
 
 variables:
   
+  - name: storageAccount-prd
+    value: 'hardacinfrthmb00saprd'
+  
+  - name: storageAccount-stg
+    value: 'hardacinfrthmb00sastg'
+  
+  - name: storageAccount-qa
+    value: 'hardacinfrthmb00saprd'
+  
   - name: SourceSA
     value: 'hardacinfrthmb00saprd'
   - name: SourceSC
@@ -36,7 +45,7 @@ stages:
     jobs:
       - job: "Build_Pipeline"
         variables:
-          job_variable: $(DestinationSAob.${{ parameters.destenv }})
+          job_variable: $(storageAccount-${{ parameters.destenv }})
           job_variable2: $(DestinationSAob)
         displayName: "Copy Thumbnails"
         timeoutInMinutes: 10
