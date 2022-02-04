@@ -3,7 +3,7 @@
 
 parameters:
    - name: 'destenv'
-     displayName: 'Environmet to copy thumbnails (qa or uat)'
+     displayName: 'Environmet to copy thumbnails (qa,uat)'
      type: string
 
 variables:
@@ -30,17 +30,18 @@ pool:
 
 stages:
   - stage: 'Trigger_Copy_thumbnails'
-    displayName: 'Copy Thumbnails'
+    displayName: 'Copy Thumbnails from productions to ${{ parameters.destenv }}'
     condition: succeeded()
     jobs:
       - job: "Build_Pipeline"
         variables:
           job_variable: $(storageAccount-${{ parameters.destenv }})
-        displayName: "Copy Thumbnails"
+        displayName: 'Copy Thumbnails from productions to ${{ parameters.destenv }}'
         timeoutInMinutes: 10
         steps:
           - task: AzureCLI@1
             name: GenerateSASSource
+            displayName: 'Generate SAS token for Thumbnails for production storage account'
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
@@ -57,6 +58,7 @@ stages:
           
           - task: AzureCLI@1
             name: GenerateSASDestination
+            displayName: 'Generate SAS token for Thumbnails for ${{ parameters.destenv }} storage account'
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
