@@ -3,10 +3,10 @@
 
 parameters:
    - name: 'destenv'
+     displayName: 'Environmet to copy thumbnails (qa or uat)'
      type: string
 
 variables:
-
   - name: storageAccount-qa
     value: 'hardacinfrthmb00saqa'
   
@@ -16,7 +16,6 @@ variables:
   - name: storageAccount-prd
     value: 'hardacinfrthmb00saprd'
   
-
   - name: serviceConnection-qa
     value: 'HARDAC-Qa'
   
@@ -25,21 +24,6 @@ variables:
   
   - name: serviceConnection-prd
     value: 'HARDAC-Prod'
-  
-
-
-  
-  - name: SourceSA
-    value: 'hardacinfrthmb00saprd'
-  - name: SourceSC
-    value: 'HARDAC-Prod'
-
-  - name: 'DestinationSA'
-    value: "{'uat' : 'hardacinfrthmb00sastg', 'qa' : 'hardacinfrthmb00saqa'}"
-  - name: 'DestinationSC'
-    value: "{'uat' : 'HARDAC-Stage', 'qa' : 'HARDAC-Qa'}"  
-  
-  
 
 pool:
   vmImage: ubuntu-latest
