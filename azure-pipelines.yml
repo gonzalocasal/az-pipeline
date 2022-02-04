@@ -3,7 +3,7 @@
 
 parameters:
    - name: 'destenv'
-     displayName: 'Environmet to copy thumbnails (qa,uat)'
+     displayName: 'Environmet to copy thumbnails (qa,stg)'
      type: string
 
 variables:
