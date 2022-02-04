@@ -1,5 +1,5 @@
 ---
-# Starter pipeline
+# Pipeline to copy thumbnails from production to QA or UAT enviroment.
 
 parameters:
    - name: 'destenv'
@@ -25,12 +25,6 @@ variables:
   - name: serviceConnection-prd
     value: 'HARDAC-Prod'
 
-  
-  - name: serviceConnection-gon
-    value: 'HARDAC-Backup'
-  - name: storageAccount-gon
-    value: 'gonzalocopy1'
-
 pool:
   vmImage: ubuntu-latest
 
@@ -40,10 +34,8 @@ stages:
     condition: succeeded()
     jobs:
       - job: "Build_Pipeline"
-        variables:
-          job_variable: $(storageAccount-${{ parameters.destenv }})
         displayName: 'Copy Thumbnails from production to ${{ parameters.destenv }}'
-        timeoutInMinutes: 10
+        timeoutInMinutes: 60
         steps:
           - task: AzureCLI@1
             name: GenerateSASSource
@@ -51,15 +43,13 @@ stages:
             env:
               AZURE_STORAGE_AUTH_MODE: login
             inputs:
-              azureSubscription: 'HARDAC-Backup'
-              #$(serviceConnection-prd)
+              azureSubscription: $(serviceConnection-prd)
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasSource=$(az storage account generate-sas --permissions acdlpruw --account-name $(storageAccount-prd) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasSource]$sasSource"
-              artifact: variables
           
           - task: AzureCLI@1
             name: GenerateSASDestination
@@ -74,7 +64,6 @@ stages:
                 end=`date -u -d "30 minutes" '+%Y-%m-%dT%H:%MZ'`
                 sasDestination=$(az storage account generate-sas --permissions acdlpruw --account-name $(storageAccount-${{ parameters.destenv }}) --services bfqt --resource-types sco --expiry $end -o tsv)
                 echo "##vso[task.setvariable variable=sasDestination]$sasDestination"
-              artifact: variables
             
           - task: AzureCLI@1
             name: Copy
@@ -86,7 +75,6 @@ stages:
               scriptLocation: inlineScript
               workingDirectory: $(Build.SourcesDirectory)/mlops
               inlineScript: |
-                
                 echo "starting azcopy command"
                 echo "from"
                 echo "https://$(storageAccount-prd).blob.core.windows.net/?$(sasSource)"
@@ -94,4 +82,3 @@ stages:
                 echo "https://$(storageAccount-${{ parameters.destenv }}).blob.core.windows.net/?$(sasDestination)"
                 
                 azcopy copy "https://$(storageAccount-prd).blob.core.windows.net/?$(sasSource)" "https://$(storageAccount-${{ parameters.destenv }}).blob.core.windows.net/?$(sasDestination)" --recursive --overwrite "ifSourceNewer"
-              artifact: variables
