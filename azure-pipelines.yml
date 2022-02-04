@@ -25,18 +25,24 @@ variables:
   - name: serviceConnection-prd
     value: 'HARDAC-Prod'
 
+  
+  - name: serviceConnection-gon
+    value: 'HARDAC-Backup'
+  - name: storageAccount-gon
+    value: 'gonzalocopy1'
+
 pool:
   vmImage: ubuntu-latest
 
 stages:
   - stage: 'Trigger_Copy_thumbnails'
-    displayName: 'Copy Thumbnails from productions to ${{ parameters.destenv }}'
+    displayName: 'Copy Thumbnails from production to ${{ parameters.destenv }}'
     condition: succeeded()
     jobs:
       - job: "Build_Pipeline"
         variables:
           job_variable: $(storageAccount-${{ parameters.destenv }})
-        displayName: 'Copy Thumbnails from productions to ${{ parameters.destenv }}'
+        displayName: 'Copy Thumbnails from production to ${{ parameters.destenv }}'
         timeoutInMinutes: 10
         steps:
           - task: AzureCLI@1
